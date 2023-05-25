@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Automation-main" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Automation-main.zip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/Automation-Main-" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/AutomationMain.sikuli" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/Carrier-Maintenance-Notification-Automation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/basic-restapi-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/broetje_control" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/func" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/home-automation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/python-qrcode" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/tldr-bot" vcs="Git" />
+  </component>
+</project>
