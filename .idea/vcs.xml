@@ -12,6 +12,7 @@
     <mapping directory="$PROJECT_DIR$/project/broetje_control" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/func" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/home-automation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/it-cert-automation-practice" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/python-qrcode" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/tldr-bot" vcs="Git" />
   </component>

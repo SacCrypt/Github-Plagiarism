@@ -10,7 +10,7 @@ class Analyzer:
 
     def analyze_language(self):
         temporary_dict = defaultdict(lambda: 0)
-        plagiarism_object = Plagiarism(self.extraction_directory, self.project_name)
+        plagiarism_object = Plagiarism(self.extraction_directory, project_name=self.project_name)
         directory_graph = plagiarism_object.directory_graph
         for x in directory_graph:
             for i in directory_graph[x]['files']:

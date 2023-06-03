@@ -27,15 +27,17 @@ class Router:
                 file_operation_object.make_directory(Router.WORKING_DIRECTORY, "project")
                 file_operation_object.save_file()
 
-                plagiarism_object = Plagiarism(extraction_directory, project_name.split(".")[0])
                 git_object = Git(extraction_directory, project_name.split(".")[0])
-
+                plagiarism_object = Plagiarism(extraction_directory,
+                                               git_object.language_used,
+                                               project_name=project_name.split(".")[0]
+                                               )
                 repositories = git_object.search_repository()
-
                 for x in repositories[:10]:
                     git_object.clone_repository(x)
-                    results = plagiarism_object.analyze_directory(os.path.join(extraction_directory, x.name))
-                    if results:
+                    directory_results = plagiarism_object.analyze(os.path.join(extraction_directory, x.name))
+                    print(f"Similarity: {directory_results}")
+                    if sum(directory_results) / len(directory_results) >= 0.80:
                         print("Plagiarized material detected.")
                     break
 

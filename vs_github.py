@@ -19,7 +19,7 @@ class Git:
 
     def search_repository(self):
         if self.check_rate():
-            query = f'{self.project_name.rstrip("-main")} language:{self.language_used}'
+            query = f'{self.project_name[:-5]} language:{self.language_used}'
             print(f'Searching repositories with query --> {query}')
             repositories = self.github_session.search_repositories(f'{query}')
             print(f'Found {repositories.totalCount} repo(s)')
