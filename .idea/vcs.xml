@@ -8,9 +8,12 @@
     <mapping directory="$PROJECT_DIR$/project/Automation-Main-" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/AutomationMain.sikuli" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/Carrier-Maintenance-Notification-Automation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/Python" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/Restaurant-Management-System-Python-" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/basic-restapi-app" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/broetje_control" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/func" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project/guide" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/home-automation" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/it-cert-automation-practice" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/project/python-qrcode" vcs="Git" />

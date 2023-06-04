@@ -1,4 +1,5 @@
 from werkzeug.utils import secure_filename
+from logger import logger
 
 
 class Sanitize:
@@ -14,19 +15,20 @@ class Sanitize:
             self.extension = self.zip_file.filename.rsplit(".")[-1]
 
     def check_file_name(self):
+        logger.debug("Checking file name...")
         if self.zip_file.filename == '' or self.zip_file.filename.count(
                 '.') > 1 or not self.zip_file.filename.count(
                 '.'):
-            print("Invalid Filename. Please rename the file.")
+            logger.warning("Invalid Filename.")
             return False
         else:
             self.zip_file.filename = secure_filename(self.zip_file.filename)
             return True
 
     def check_allowed_file_types(self):
+        logger.debug("Checking allowed file types...")
         for x in Sanitize.ALLOWED_EXTENSIONS:
             if self.extension.lower() in self.ALLOWED_EXTENSIONS[x]:
                 return True
-        else:
-            print("Extension not allowed! Please upload a compressed file or a flat file.")
-            return False
+        logger.warning("Extension not allowed!")
+        return False

@@ -3,11 +3,13 @@ import pickle
 import jellyfish
 from feature_extract import SemanticAnalysis
 import json
+from logger import logger
 
 
-class Plagiarism:
+class Plagiarism(SemanticAnalysis):
 
     def __init__(self, extraction_directory, language_used=None, project_name=None):
+        self.supported_languages = {"Python"}
         self.language_used = language_used
         self.project_name = project_name
         self.extraction_directory = extraction_directory
@@ -19,6 +21,7 @@ class Plagiarism:
                                                                                            self.project_name))
 
     def traverse_directory(self, directory):
+        logger.debug("Generating directory graph and semantic results...")
         graph = {}
         dirs_to_be_ignored = {'.git', '__pycache__'}
         semantic_results = set()
@@ -28,9 +31,9 @@ class Plagiarism:
 
             for f in files:
                 if f.count('.') == 1 and f.split('.')[-1] in self.extension_mapping:
-                    if self.language_used:
+                    if self.language_used and self.language_used in self.supported_languages:
                         if '.' + f.split('.')[-1] in self.json_data['name'][self.language_used]:
-                            data = SemanticAnalysis.extract_names(os.path.join(root, f))
+                            data = self.extract_names(os.path.join(root, f), self.language_used)
                             semantic_results = semantic_results.union(data)
                     temp.append(f)
 
@@ -46,9 +49,11 @@ class Plagiarism:
             for file_name in files:
                 graph[root_dir]['files'].append(file_name)
 
+        logger.info(f"Successfully generated directory graph and semantic analysis for {directory}")
         return semantic_results, graph
 
     def analyze(self, path):
+        logger.debug("Generating Results...")
         total_similarities = 0
         suspected_semantic_results, suspected_project_graph = self.traverse_directory(path)
         iterations = max(len(self.directory_graph), len(suspected_project_graph)) * 3
@@ -69,5 +74,6 @@ class Plagiarism:
         print(self.semantic_results)
         print("*" * 125)
         print(suspected_semantic_results)
+        logger.info("Successfully generated plagiarism results.")
         return len(self.semantic_results.intersection(suspected_semantic_results)) / len(self.semantic_results.union(
             suspected_semantic_results)), total_similarities / iterations

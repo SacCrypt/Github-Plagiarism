@@ -1,3 +1,5 @@
+import shutil
+from logger import logger
 from flask import Flask, request
 from validation import Sanitize
 from file_operations import FileOperations
@@ -20,6 +22,7 @@ class Router:
             zip_file = request.files['file']
             sanitize_object = Sanitize(zip_file)
             if sanitize_object.check_file_name() and sanitize_object.check_allowed_file_types():
+                logger.info("Successfully validated file.")
                 project_name = sanitize_object.zip_file.filename
                 extension = sanitize_object.extension
                 extraction_directory = os.path.join(Router.WORKING_DIRECTORY, "project")
@@ -35,11 +38,17 @@ class Router:
                 repositories = git_object.search_repository()
                 for x in repositories[:10]:
                     git_object.clone_repository(x)
-                    directory_results = plagiarism_object.analyze(os.path.join(extraction_directory, x.name))
-                    print(f"Similarity: {directory_results}")
-                    if sum(directory_results) / len(directory_results) >= 0.80:
+                    results = plagiarism_object.analyze(os.path.join(extraction_directory, x.name))
+                    print(f"Similarity: {results}")
+                    if sum(results) / len(results) >= 0.80:
                         print("Plagiarized material detected.")
-                    break
+                        break
+                    else:
+                        try:
+                            shutil.rmtree(os.path.join(extraction_directory, x.name))
+                            print("Directory Deleted Successfully.")
+                        except Exception as e:
+                            print("Error occurred when deleting a directory", e)
 
             else:
                 return {"Message": "Failure"}
