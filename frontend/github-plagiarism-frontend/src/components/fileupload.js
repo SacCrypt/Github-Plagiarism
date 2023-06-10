@@ -1,17 +1,23 @@
-import { Box, IconButton, LinearProgress, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Chip,
+  Stack,
+  IconButton,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
 import UploadIcon from "@mui/icons-material/Upload";
-import { Chip } from "@mui/material";
 import { Check } from "@mui/icons-material";
+import { json, useNavigate } from "react-router-dom";
 
 function FileUpload() {
   const [tip, setTip] = useState("Uploading Files");
   const [dragOver, setDragOver] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const submitFile = (file) => {
-    console.log(file);
     setLoading(true);
 
     const formData = new FormData();
@@ -20,8 +26,12 @@ function FileUpload() {
       method: "POST",
       body: formData,
     }).then((data) => {
-      console.log(data);
-      setData(data);
+      data.json().then((data) => {
+        const json_data = data;
+        navigate("/reports", { state: json_data });
+      });
+      setData([data]);
+      setTip("Project Analysis Complete...");
     });
     let iteration = 0;
     const id = setInterval(() => {
@@ -29,9 +39,6 @@ function FileUpload() {
       if (iteration == tips.length) {
         setTip("Almost Done...");
         clearInterval(id);
-      } else if (data) {
-        console.log(data);
-        setTip("Done");
       }
       iteration += 1;
     }, 3000);
@@ -42,13 +49,16 @@ function FileUpload() {
     "Analyzing Content",
     "Detecting Plagiarism",
     "Generating Reports",
-    "Almost Done",
   ];
 
   const handleFileChange = (e) => {
-    const event_file = e.target.files[0];
-    console.log(event_file);
-    submitFile(event_file);
+    if (dragOver) {
+      setDragOver(false);
+    }
+    if (e) {
+      const event_file = e.target.files[0];
+      submitFile(event_file);
+    }
   };
 
   const handleDrag = (e) => {
@@ -59,17 +69,12 @@ function FileUpload() {
     }
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    if (dragOver) {
-      setDragOver(false);
-    }
-  };
-
   return (
     <Box
       onDragOver={handleDrag}
-      onDrop={handleDrop}
+      onDrop={() => {
+        handleFileChange();
+      }}
       onDragEnter={handleDrag}
       sx={{
         backgroundColor: dragOver ? "#e6eefc" : "#dbd8d7",
@@ -78,18 +83,29 @@ function FileUpload() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "column",
         margin: "auto",
         border: dragOver ? "2px dotted black" : "2px solid black",
       }}
     >
       {loading ? (
-        <Box>
-          <h3> {tip} </h3>
-          <br />
-          {data ? (
-            <Check color="success" />
+        <Box
+          display="flex"
+          alignItems="center"
+          flexDirection="column"
+          gap=".5em"
+        >
+          {data.length ? (
+            <Stack display="flex" alignItems="center">
+              <h2> {tip} </h2>
+              <Check sx={{ fontSize: "60px" }} color="success" />
+            </Stack>
           ) : (
-            <LinearProgress color="success" />
+            <Box>
+              <h2> {tip} </h2>
+              <br />
+              <LinearProgress color="success" />
+            </Box>
           )}
         </Box>
       ) : (

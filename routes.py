@@ -6,19 +6,31 @@ from file_operations import FileOperations
 import os
 from Detect import Plagiarism
 from vs_github import Git
+import json
+from models import db, User, Plague
 
 
 class Router:
-
     WORKING_DIRECTORY = os.getcwd()
     app = Flask(__name__)
+    app.debug = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+    db.init_app(app)
+    app.app_context().push()
+    db.create_all()
 
     def __init__(self):
+        pass
+
+    @staticmethod
+    def run():
         Router.app.run(debug=True, port=5000, use_reloader=False)
 
     @app.route("/api/upload", methods=['GET', 'POST'])
     def root():
-        if request.method == 'POST' and request.files:
+        print("Hit")
+        if request.files:
             zip_file = request.files['file']
             sanitize_object = Sanitize(zip_file)
             if sanitize_object.check_file_name() and sanitize_object.check_allowed_file_types():
@@ -40,21 +52,33 @@ class Router:
                     git_object.clone_repository(x)
                     results = plagiarism_object.analyze(os.path.join(extraction_directory, x.name))
                     print(f"Similarity: {results}")
-                    if sum(results) / len(results) >= 0.80:
+                    percent = sum(results) / len(results)
+                    if "main" in project_name:
+                        project_name = project_name[:-5]
+                    else:
+                        project_name = project_name[:-7]
+                    db_plague = Plague(projectName=f"{project_name}", percentage=percent,
+                                       repository=x.clone_url[:-5])
+                    if percent >= 0.80:
                         print("Plagiarized material detected.")
-                        break
                     else:
                         try:
                             shutil.rmtree(os.path.join(extraction_directory, x.name))
                             print("Directory Deleted Successfully.")
                         except Exception as e:
                             print("Error occurred when deleting a directory", e)
+                    db.session.add(db_plague)
+                    db.session.commit()
+                    print("Successful Commit")
 
-            else:
-                return {"Message": "Failure"}
+                    return json.dumps({"Message": "Successful analysis", "percentage": percent*100,
+                                       "redirect_id": db_plague.id})
+        return json.dumps({"Message": "Failure"})
 
-        return {"Message": "Success"}
+
+if __name__ == "__main__":
+    router = Router()
+    router.run()
 
 
-router = Router()
 
