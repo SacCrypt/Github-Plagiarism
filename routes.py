@@ -1,6 +1,6 @@
 import shutil
 from logger import logger
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from validation import Sanitize
 from file_operations import FileOperations
 import os
@@ -8,13 +8,14 @@ from Detect import Plagiarism
 from vs_github import Git
 import json
 from models import db, User, Plague
+from uuid import UUID
 
 
 class Router:
     WORKING_DIRECTORY = os.getcwd()
     app = Flask(__name__)
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///your_database.db"
 
     db.init_app(app)
     app.app_context().push()
@@ -29,7 +30,7 @@ class Router:
 
     @app.route("/api/upload", methods=['GET', 'POST'])
     def root():
-        print("Hit")
+        # print("Hit")
         if request.files:
             zip_file = request.files['file']
             sanitize_object = Sanitize(zip_file)
@@ -37,48 +38,69 @@ class Router:
                 logger.info("Successfully validated file.")
                 project_name = sanitize_object.zip_file.filename
                 extension = sanitize_object.extension
-                extraction_directory = os.path.join(Router.WORKING_DIRECTORY, "project")
-                file_operation_object = FileOperations(zip_file, extraction_directory, extension, project_name)
-                file_operation_object.make_directory(Router.WORKING_DIRECTORY, "project")
+                extraction_directory = os.path.join(
+                    Router.WORKING_DIRECTORY, "project")
+                file_operation_object = FileOperations(
+                    zip_file, extraction_directory, extension, project_name)
+                file_operation_object.make_directory(
+                    Router.WORKING_DIRECTORY, "project")
                 file_operation_object.save_file()
 
-                git_object = Git(extraction_directory, project_name.split(".")[0])
+                git_object = Git(extraction_directory,
+                                 project_name.split(".")[0])
                 plagiarism_object = Plagiarism(extraction_directory,
                                                git_object.language_used,
-                                               project_name=project_name.split(".")[0]
+                                               project_name=project_name.split(".")[
+                                                   0]
                                                )
                 repositories = git_object.search_repository()
+
                 for x in repositories[:10]:
+                    print(extraction_directory, x.name, x.full_name)
+                    if os.path.exists(os.path.join(extraction_directory, x.name)):
+                        logger.info("Path exists, switching to cache")
+                        with open(os.path.join(extraction_directory, x.name, "result.json")) as f:
+                            data = json.load(f)
+                            
+                            return jsonify(data)
                     git_object.clone_repository(x)
-                    results = plagiarism_object.analyze(os.path.join(extraction_directory, x.name))
+                    results = plagiarism_object.analyze(
+                        os.path.join(extraction_directory, x.name))
                     print(f"Similarity: {results}")
-                    percent = sum(results) / len(results)
-                    if "main" in project_name:
-                        project_name = project_name[:-5]
-                    else:
-                        project_name = project_name[:-7]
-                    db_plague = Plague(projectName=f"{project_name}", percentage=percent,
-                                       repository=x.clone_url[:-5])
+                    percent = (sum(results) / len(results)) * 100
+                    db_plague = Plague(projectName=f"{project_name.replace('-master', '').replace('-main', '')}",
+                                       percentage=percent,
+                                       repository=x.clone_url[:-6])
                     if percent >= 0.80:
                         print("Plagiarized material detected.")
                     else:
                         try:
-                            shutil.rmtree(os.path.join(extraction_directory, x.name))
+                            shutil.rmtree(os.path.join(
+                                extraction_directory, x.name))
                             print("Directory Deleted Successfully.")
                         except Exception as e:
                             print("Error occurred when deleting a directory", e)
                     db.session.add(db_plague)
                     db.session.commit()
                     print("Successful Commit")
+                    content = {"Message": "Successful analysis", "percentage": percent,
+                               "redirect_id": db_plague.id}
+                    with open(f"{os.path.join(extraction_directory, x.name)}/result.json", "w") as f:
+                        json.dump(content, f)
+                    return jsonify(content)
+        return jsonify({"Message": "Failure"})
 
-                    return json.dumps({"Message": "Successful analysis", "percentage": percent*100,
-                                       "redirect_id": db_plague.id})
-        return json.dumps({"Message": "Failure"})
+    @app.route("/api/get_reports/<string:item_id>", methods=["GET"])
+    def get_item_with_id(item_id):
+        report = Plague.query.get(item_id)
+
+        if report:
+            print(report)
+            return jsonify(report.as_dict())
+        else:
+            return jsonify({'message': 'Item not found'})
 
 
 if __name__ == "__main__":
     router = Router()
     router.run()
-
-
-

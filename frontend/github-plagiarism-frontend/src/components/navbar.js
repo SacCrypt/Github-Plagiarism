@@ -1,7 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Stack, Button, Box } from "@mui/material";
 
-function Navbar() {
+function Navbar({ color }) {
   const customButtonStyle = {
     fontSize: 16,
     fontWeight: "bold",
@@ -14,7 +14,7 @@ function Navbar() {
     <Box>
       <AppBar
         sx={{
-          backgroundColor: "primary",
+          backgroundColor: color,
           padding: 1,
           marginBottom: "5em",
         }}

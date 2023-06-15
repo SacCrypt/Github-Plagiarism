@@ -26,7 +26,7 @@ function LandingTwo() {
           padding: "2em",
         }}
       >
-        <img height={300} width={500} src={image1} />
+        <img alt="Thief bulb1" height={300} width={500} src={image1} />
         <p style={textStyle}>
           <h2> Why Plagiarism Checker ? </h2>
           <br />
@@ -77,7 +77,12 @@ function LandingTwo() {
           believe in fostering a culture of innovation, originality, and
           creativity.
         </p>
-        <img height={400} width={700} src={image2} />
+        <img
+          alt="man fishnet stealing bulb"
+          height={400}
+          width={700}
+          src={image2}
+        />
       </Stack>
       <Stack
         display="flex"
@@ -90,7 +95,7 @@ function LandingTwo() {
           padding: "2em",
         }}
       >
-        <img height={400} width={700} src={image3} />
+        <img alt="Theif magnet bulb" height={400} width={700} src={image3} />
         <p style={textStyle}>
           {" "}
           <h2> Prevention </h2>

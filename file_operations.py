@@ -12,7 +12,8 @@ class FileOperations:
         self.extraction_directory = extraction_directory
         self.extension = extension
         self.zip_file = zip_file
-        self.zip_file_path = os.path.join(self.extraction_directory, self.project_name)
+        self.zip_file_path = os.path.join(
+            self.extraction_directory, self.project_name)
 
     def save_file(self):
         logger.debug("Saving file...")
@@ -26,7 +27,8 @@ class FileOperations:
     def unpack(self):
         logger.debug("Unpacking compressed file.")
         try:
-            shutil.unpack_archive(self.zip_file_path, self.extraction_directory)
+            shutil.unpack_archive(self.zip_file_path,
+                                  self.extraction_directory)
             logger.debug("Removing archive")
             os.remove(self.zip_file_path)
         except shutil.ReadError:

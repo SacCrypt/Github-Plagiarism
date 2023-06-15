@@ -9,9 +9,9 @@ import {
 import React, { useState } from "react";
 import UploadIcon from "@mui/icons-material/Upload";
 import { Check } from "@mui/icons-material";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function FileUpload() {
+function FileUpload({ setColor }) {
   const [tip, setTip] = useState("Uploading Files");
   const [dragOver, setDragOver] = useState(false);
   const [data, setData] = useState([]);
@@ -27,8 +27,9 @@ function FileUpload() {
       body: formData,
     }).then((data) => {
       data.json().then((data) => {
-        const json_data = data;
-        navigate("/reports", { state: json_data });
+        navigate(`/reports/?id=${data.redirect_id}`, {
+          state: data,
+        });
       });
       setData([data]);
       setTip("Project Analysis Complete...");
@@ -36,7 +37,7 @@ function FileUpload() {
     let iteration = 0;
     const id = setInterval(() => {
       setTip(tips[iteration]);
-      if (iteration == tips.length) {
+      if (iteration === tips.length) {
         setTip("Almost Done...");
         clearInterval(id);
       }
