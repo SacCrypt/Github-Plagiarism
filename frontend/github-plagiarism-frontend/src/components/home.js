@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { Box } from "@mui/material";
 import LandingOne from "./landingOne";
 import FileUpload from "./fileupload";
@@ -8,11 +8,13 @@ import { Context } from "../App";
 function Home() {
   const setColor = useContext(Context);
   setColor("primary");
+  const focusComponent = useRef(null);
+
   return (
     <Box padding={2}>
-      <LandingOne />
+      <LandingOne focusComponent={focusComponent} />
       <LandingTwo />
-      <FileUpload />
+      <FileUpload ref={focusComponent} />
     </Box>
   );
 }

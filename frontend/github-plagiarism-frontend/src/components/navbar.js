@@ -22,7 +22,7 @@ function Navbar({ color }) {
       >
         <Toolbar>
           <Typography sx={{ flexGrow: 1 }} component="div" variant="h4">
-            Plagiarism Checker
+            Verity
           </Typography>
           <Stack direction="row" spacing={2}>
             <Button sx={customButtonStyle}> Features </Button>

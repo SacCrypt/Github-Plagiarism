@@ -6,12 +6,12 @@ import {
   LinearProgress,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import UploadIcon from "@mui/icons-material/Upload";
 import { Check } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-function FileUpload({ setColor }) {
+const FileUpload = forwardRef((props, ref) => {
   const [tip, setTip] = useState("Uploading Files");
   const [dragOver, setDragOver] = useState(false);
   const [data, setData] = useState([]);
@@ -72,6 +72,7 @@ function FileUpload({ setColor }) {
 
   return (
     <Box
+      ref={ref}
       onDragOver={handleDrag}
       onDrop={() => {
         handleFileChange();
@@ -157,6 +158,6 @@ function FileUpload({ setColor }) {
       )}
     </Box>
   );
-}
+});
 
 export default FileUpload;

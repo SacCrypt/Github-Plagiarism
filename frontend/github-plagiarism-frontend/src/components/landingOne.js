@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 
-function LandingOne() {
+function LandingOne({ focusComponent }) {
   return (
     <Box
       sx={{
@@ -27,6 +27,9 @@ function LandingOne() {
         Plagiarism Checker . <br /> Detecting Software Plagiarism With Fancy
         Algorithms .
         <Button
+          onClick={() =>
+            focusComponent.current.scrollIntoView({ behaviour: "smooth" })
+          }
           sx={{
             padding: 1.5,
             fontSize: 20,
