@@ -61,7 +61,7 @@ class Router:
                         logger.info("Path exists, switching to cache")
                         with open(os.path.join(extraction_directory, x.name, "result.json")) as f:
                             data = json.load(f)
-                            
+
                             return jsonify(data)
                     git_object.clone_repository(x)
                     results = plagiarism_object.analyze(
@@ -99,6 +99,21 @@ class Router:
             return jsonify(report.as_dict())
         else:
             return jsonify({'message': 'Item not found'})
+
+    @app.route("/api/signup", methods=["POST"])
+    def register():
+        json_data = request.get_json()
+        name = json_data['name']
+        email = json_data['email']
+        password = json_data['password']
+
+        user_register = User(username=name, email=email)
+        user_register.set_password(password)
+
+        db.session.add(user_register)
+        db.session.commit()
+        logger.info("Committed User Successfully")
+        return {"Message": "Successful"}
 
 
 if __name__ == "__main__":

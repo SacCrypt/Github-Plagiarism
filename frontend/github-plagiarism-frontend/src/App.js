@@ -5,11 +5,18 @@ import styles from "../src/static/css/app.module.css";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Report from "./components/reports";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import SignUp from "./components/signup";
 
 const Context = createContext();
 
 function App() {
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    if (sessionStorage.getItem("loggedIn") && sessionStorage.getItem("user")) {
+      setUser(JSON.parse(sessionStorage.getItem("user")));
+    }
+  }, []);
   const queryClient = new QueryClient();
   const [color, setColor] = useState("primary");
   const theme = createTheme({
@@ -38,10 +45,14 @@ function App() {
                 href="https://fonts.googleapis.com/css2?family=Geologica&family=PT+Sans+Narrow&display=swap"
                 rel="stylesheet"
               />
-              <Navbar color={color} />
+              <Navbar color={color} user={user} setUser={setUser} />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/reports/" element={<Report />} />
+                <Route
+                  path="/signup"
+                  element={<SignUp user={user} setUser={setUser} />}
+                />
               </Routes>
             </div>
           </Context.Provider>

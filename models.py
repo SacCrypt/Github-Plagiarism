@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(20), nullable=True, unique=True)
     email = db.Column(db.String(120), nullable=True, unique=True)
     password = db.Column(db.String(60), nullable=True)
@@ -23,11 +23,11 @@ class User(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __repr__(self):
-        return f"User('{self.username} {self.email} {self.plagiarism}')"
+        return f"User('{self.username} {self.email}')"
 
 
 class Plague(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     projectName = db.Column(db.String(40), nullable=False)
     percentage = db.Column(db.Float, nullable=False)
     repository = db.Column(db.String(100), nullable=False)
