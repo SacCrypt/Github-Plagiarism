@@ -7,6 +7,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Report from "./components/reports";
 import { createContext, useEffect, useState } from "react";
 import SignUp from "./components/signup";
+import Login from "./components/login";
 
 const Context = createContext();
 
@@ -49,9 +50,12 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/reports/" element={<Report />} />
+                <Route path="/signup" element={<SignUp user={user} />} />
                 <Route
-                  path="/signup"
-                  element={<SignUp user={user} setUser={setUser} />}
+                  path="/login"
+                  element={
+                    <Login color={color} user={user} setUser={setUser} />
+                  }
                 />
               </Routes>
             </div>

@@ -7,35 +7,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
-import jwt_decode from "jwt-decode";
 import { Navigate } from "react-router-dom";
 
 const TransitionSnackbar = (props) => {
   return <Slide {...props} direction="down" />;
 };
 
-const SignUp = ({ user, setUser }) => {
-  const handleCallbackResponse = (response) => {
-    var userObj = jwt_decode(response.credential);
-    setUser(userObj);
-    sessionStorage.setItem("loggedIn", true);
-    sessionStorage.setItem("user", JSON.stringify(userObj));
-    <Navigate to="/" />;
-  };
-  useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id:
-        "762588068378-ve9a57a07p0tibu53cdnqtlbprgvg4in.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("googleauth"), {
-      theme: "outline",
-      size: "large",
-    });
-  }, []);
+const SignUp = ({ user }) => {
   const [status, setStatus] = useState(false);
   const formik = useFormik({
     initialValues: {
@@ -97,135 +77,130 @@ const SignUp = ({ user, setUser }) => {
       return errors;
     },
   });
-
+  if (Object.keys(user).length) {
+    return <Navigate to="/" />;
+  }
   return (
-    <>
-      {Object.keys(user).length ? (
-        <Navigate to="/" />
-      ) : (
-        <Box
-          border="2px solid black"
-          padding={5}
-          borderRadius="12px"
-          margin="auto"
-          width="30em"
-          display="flex"
-          alignItems="center"
-          flexDirection="column"
+    <Box
+      border="2px solid black"
+      padding={5}
+      borderRadius="12px"
+      margin="auto"
+      width="30em"
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+    >
+      <Snackbar
+        color="black"
+        TransitionComponent={TransitionSnackbar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={status}
+        autoHideDuration={6000}
+        onClose={() => setStatus(false)}
+      >
+        <Alert
+          sx={{ backgroundColor: "#90EE90", color: "black" }}
+          severity="success"
         >
-          <Snackbar
-            color="black"
-            TransitionComponent={TransitionSnackbar}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center",
+          {" "}
+          Registration Successful !{" "}
+        </Alert>
+      </Snackbar>
+      <Typography alignSelf="flex-start" variant="h4">
+        Get Started Now{" "}
+      </Typography>
+      <Typography
+        color="grey"
+        marginLeft="2em"
+        alignSelf="flex-start"
+        variant="subtitle2"
+      >
+        {" "}
+        Enter your information to register
+      </Typography>
+
+      <Box padding={5} width={400} margin="auto">
+        <form
+          onSubmit={formik.handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "2em" }}
+        >
+          <TextField
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.name && formik.errors.name}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            name="name"
+            id="name"
+            variant="standard"
+            label="Name"
+            onChange={formik.handleChange}
+            value={formik.values.name}
+          />
+          <TextField
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.email && formik.errors.email}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            name="email"
+            id="email"
+            variant="standard"
+            label="Email"
+            onChange={formik.handleChange}
+            value={formik.values.email}
+          />
+          <TextField
+            sx={{
+              whiteSpace: "pre-line",
             }}
-            open={status}
-            autoHideDuration={6000}
-            onClose={() => setStatus(false)}
-          >
-            <Alert
-              sx={{ backgroundColor: "#90EE90", color: "black" }}
-              severity="success"
-            >
-              {" "}
-              Registration Successful !{" "}
-            </Alert>
-          </Snackbar>
-          <Typography alignSelf="flex-start" variant="h4">
-            Get Started Now{" "}
-          </Typography>
-          <Typography
-            color="grey"
-            marginLeft="2em"
-            alignSelf="flex-start"
-            variant="subtitle2"
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.password && formik.errors.password}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            type="password"
+            name="password"
+            id="password"
+            variant="standard"
+            label="Password"
+            onChange={formik.handleChange}
+            value={formik.values.password}
+          />
+          <TextField
+            onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.confirmPassword && formik.errors.confirmPassword
+            }
+            error={
+              formik.touched.confirmPassword &&
+              Boolean(formik.errors.confirmPassword)
+            }
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            variant="standard"
+            label="Confirm Password"
+            onChange={formik.handleChange}
+            value={formik.values.confirmPassword}
+          />
+          <Button
+            sx={{
+              alignSelf: "center",
+              width: "10rem",
+              border: "2px solid white",
+              padding: "5px",
+              borderRadius: "15px",
+              textAlign: "center",
+              backgroundColor: "#3d3af0cc",
+              color: "white",
+            }}
+            type="submit"
           >
             {" "}
-            Enter your information to register
-          </Typography>
-          <Box marginTop="1em">
-            {Object.keys(user).length ? "" : <Box id="googleauth"> Temp </Box>}
-            <Button> Temp </Button>
-          </Box>
-
-          <Typography
-            marginTop={"2em"}
-            marginBottom=".5em"
-            color={"grey"}
-            variant="subtitle2"
-          >
-            or
-          </Typography>
-
-          <Box padding={5} width={400} margin="auto">
-            <form
-              onSubmit={formik.handleSubmit}
-              style={{ display: "flex", flexDirection: "column", gap: "2em" }}
-            >
-              <TextField
-                onBlur={formik.handleBlur}
-                helperText={formik.touched.name && formik.errors.name}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                name="name"
-                id="name"
-                variant="standard"
-                label="Name"
-                onChange={formik.handleChange}
-                value={formik.values.name}
-              />
-              <TextField
-                onBlur={formik.handleBlur}
-                helperText={formik.touched.email && formik.errors.email}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                name="email"
-                id="email"
-                variant="standard"
-                label="Email"
-                onChange={formik.handleChange}
-                value={formik.values.email}
-              />
-              <TextField
-                sx={{
-                  whiteSpace: "pre-line",
-                }}
-                onBlur={formik.handleBlur}
-                helperText={formik.touched.password && formik.errors.password}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                type="password"
-                name="password"
-                id="password"
-                variant="standard"
-                label="Password"
-                onChange={formik.handleChange}
-                value={formik.values.password}
-              />
-              <TextField
-                onBlur={formik.handleBlur}
-                helperText={
-                  formik.touched.confirmPassword &&
-                  formik.errors.confirmPassword
-                }
-                error={
-                  formik.touched.confirmPassword &&
-                  Boolean(formik.errors.confirmPassword)
-                }
-                type="password"
-                name="confirmPassword"
-                id="confirmPassword"
-                variant="standard"
-                label="Confirm Password"
-                onChange={formik.handleChange}
-                value={formik.values.confirmPassword}
-              />
-              <Button type="submit"> Sign Up</Button>
-            </form>
-          </Box>
-        </Box>
-      )}
-    </>
+            Sign Up{" "}
+          </Button>
+        </form>
+      </Box>
+    </Box>
   );
 };
 

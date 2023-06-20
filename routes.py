@@ -115,6 +115,19 @@ class Router:
         logger.info("Committed User Successfully")
         return {"Message": "Successful"}
 
+    @app.route("/api/login", methods=["POST"])
+    def login():
+        json_data = request.get_json()
+        email = json_data['email']
+        password = json_data['password']
+
+        user = User.query.filter(User.email == email).first()
+        print(password, user.email, user.password)
+        if user and user.check_password(password):
+            return {"Message": "Successful"}
+        return {"Message": "Failure"}
+
+
 
 if __name__ == "__main__":
     router = Router()

@@ -9,6 +9,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { deepOrange } from "@mui/material/colors";
 
 function Navbar({ color, user, setUser }) {
   const handleSignOut = () => {
@@ -35,23 +36,32 @@ function Navbar({ color, user, setUser }) {
       >
         <Toolbar>
           <Typography sx={{ flexGrow: 1 }} component="div" variant="h4">
-            Verity
+            <Link style={{ textDecoration: "None", color: "inherit" }} to={"/"}>
+              Verity
+            </Link>
           </Typography>
           <Stack direction="row" spacing={2}>
             <Button sx={customButtonStyle}> Features </Button>
             <Button sx={customButtonStyle}>About</Button>
             {Object.keys(user).length ? (
               <Stack gap={1} direction="column" alignItems="center">
-                <Avatar
-                  sx={{
-                    position: "relative",
-                    cursor: "pointer",
-                    width: 40,
-                    height: 40,
-                  }}
-                  alt="user"
-                  src={user.picture}
-                ></Avatar>
+                {user.picture ? (
+                  <Avatar
+                    sx={{
+                      position: "relative",
+                      cursor: "pointer",
+                      width: 40,
+                      height: 40,
+                    }}
+                    alt="user"
+                    src={user.picture}
+                  ></Avatar>
+                ) : (
+                  <Avatar sx={{ bgcolor: deepOrange[500] }}>
+                    {user.name[0]}
+                  </Avatar>
+                )}
+
                 <Button
                   onClick={handleSignOut}
                   sx={{
@@ -76,7 +86,15 @@ function Navbar({ color, user, setUser }) {
                     Sign-Up
                   </Link>
                 </Button>
-                <Button sx={customButtonStyle}> Login </Button>
+                <Button sx={customButtonStyle}>
+                  {" "}
+                  <Link
+                    style={{ textDecoration: "None", color: "inherit" }}
+                    to={"/login"}
+                  >
+                    Login
+                  </Link>
+                </Button>
               </Stack>
             )}
           </Stack>
